@@ -56,6 +56,15 @@
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>D:\Steam\steamapps\common\Sons Of The Forest\_Redloader\Game\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.TextCoreFontEngineModule">
+      <HintPath>D:\Steam\steamapps\common\Sons Of The Forest\_Redloader\unity-libs\UnityEngine.TextCoreFontEngineModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.TextCoreTextEngineModule">
+      <HintPath>D:\Steam\steamapps\common\Sons Of The Forest\_Redloader\unity-libs\UnityEngine.TextCoreTextEngineModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.TextRenderingModule">
+      <HintPath>D:\Steam\steamapps\common\Sons Of The Forest\_Redloader\unity-libs\UnityEngine.TextRenderingModule.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine.UI">
       <HintPath>D:\Steam\steamapps\common\Sons Of The Forest\_Redloader\Game\UnityEngine.UI.dll</HintPath>
     </Reference>
