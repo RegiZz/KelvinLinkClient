@@ -1,105 +1,105 @@
 ﻿using RedLoader;
 using RedLoader.Unity.IL2CPP.Utils;
 using SonsSdk;
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Object = UnityEngine.Object;
 
 namespace KelvinLinkMod
 {
-    public class KelvinLinkClient : BasePlugin
+    public class KelvinLinkClient : SonsMod
     {
-        public override string Name => "KelvinLink Client";
-        public override string Author => "TwojNick";
-        public override string Version => "0.1.0";
-
         private GameObject helperObject;
         private KelvinLinkHelper helperComponent;
+        private UnityAction<Scene, LoadSceneMode> sceneLoadedAction;
 
-        public override void OnEnable()
+        protected override void OnInitializeMod()
         {
-            RLog.Msg("[KelvinLink] Mod włączony");
+            RLog.Msg("[KelvinLink] Mod zainicjalizowany");
 
-            // Tworzymy GameObject z MonoBehaviour, żeby mieć coroutine
+            // Helper do coroutine
             helperObject = new GameObject("KelvinLinkHelper");
+            Object.DontDestroyOnLoad(helperObject);
             helperComponent = helperObject.AddComponent<KelvinLinkHelper>();
 
-            // Podpinamy event ładowania sceny (jawny delegate)
-            SceneManager.sceneLoaded += new UnityAction<Scene, LoadSceneMode>(OnSceneLoaded);
+            // IL2CPP requires casting from System.Action to UnityAction
+            sceneLoadedAction = (UnityAction<Scene, LoadSceneMode>)new System.Action<Scene, LoadSceneMode>(OnSceneLoaded);
+            SceneManager.sceneLoaded += sceneLoadedAction;
         }
 
-        public override void OnDisable()
+        protected override void OnDeinitializeMod()
         {
-            RLog.Msg("[KelvinLink] Mod wyłączony");
+            RLog.Msg("[KelvinLink] Mod wyłączany");
 
-            // Odpinamy event
-            SceneManager.sceneLoaded -= new UnityAction<Scene, LoadSceneMode>(OnSceneLoaded);
+            if (sceneLoadedAction != null)
+            {
+                SceneManager.sceneLoaded -= sceneLoadedAction;
+                sceneLoadedAction = null;
+            }
 
-            // Usuwamy pomocniczy GameObject
             if (helperObject != null)
-                GameObject.Destroy(helperObject);
+            {
+                Object.Destroy(helperObject);
+                helperObject = null;
+                helperComponent = null;
+            }
         }
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
             RLog.Msg($"[KelvinLink] Załadowano scenę: {scene.name}");
 
-            if (scene.name == "TitleScene")
+            if (!string.IsNullOrEmpty(scene.name) && scene.name.ToLower().Contains("title"))
             {
-                // Odpal coroutine przez helperComponent
                 helperComponent.StartCoroutine(AddKelvinButtonCoroutine());
             }
         }
 
         private IEnumerator AddKelvinButtonCoroutine()
         {
-            // Czekamy trochę, by UI zdążyło się załadować
             yield return new WaitForSeconds(0.15f);
 
-            var canvas = GameObject.FindObjectOfType<Canvas>();
+            var canvas = Object.FindObjectOfType<Canvas>();
             if (canvas == null)
             {
                 RLog.Error("[KelvinLink] Nie znaleziono Canvas w menu!");
                 yield break;
             }
 
-            var existingButton = GameObject.FindObjectOfType<Button>();
+            var existingButton = Object.FindObjectOfType<Button>();
             if (existingButton == null)
             {
                 RLog.Error("[KelvinLink] Nie znaleziono przycisku do klonowania!");
                 yield break;
             }
 
-            // Klonujemy istniejący przycisk i zmieniamy tekst
-            var kelvinBtnObj = GameObject.Instantiate(existingButton.gameObject, existingButton.transform.parent);
+            var kelvinBtnObj = Object.Instantiate(existingButton.gameObject, existingButton.transform.parent);
             kelvinBtnObj.name = "KelvinLinkButton";
 
             var btn = kelvinBtnObj.GetComponent<Button>();
             var text = kelvinBtnObj.GetComponentInChildren<Text>();
-            if (text != null) text.text = "KelvinLink";
 
-            // Czyścimy poprzednie eventy i dodajemy własny listener
+            if (text != null)
+                text.text = "KelvinLink";
+
             btn.onClick.RemoveAllListeners();
-            btn.onClick.AddListener(() =>
-            {
-                RLog.Msg("[KelvinLink] Kliknięto przycisk KelvinLink!");
-                OpenKelvinServerMenu();
-            });
+            // IL2CPP requires casting from System.Action to UnityAction
+            btn.onClick.AddListener((UnityAction)new System.Action(OpenKelvinServerMenu));
 
-            // Przesuwamy przycisk, by się nie nakładał
             var rt = kelvinBtnObj.GetComponent<RectTransform>();
-            rt.anchoredPosition -= new Vector2(0, 100);
+            if (rt != null)
+                rt.anchoredPosition -= new Vector2(0f, 100f);
         }
 
         private void OpenKelvinServerMenu()
         {
             RLog.Msg("[KelvinLink] TODO: otwórz menu serwerów KelvinLink");
-            // Tu możesz dodać wywołanie Twojego UI lub połączenie z serwerem
         }
     }
 
-    // Prosty MonoBehaviour do uruchamiania coroutine
     public class KelvinLinkHelper : MonoBehaviour { }
 }
