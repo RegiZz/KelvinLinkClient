@@ -15,6 +15,7 @@ namespace KelvinLinkMod
     public class KelvinLinkClient : SonsMod
     {
         private GameObject helperObject;
+        public static KelvinLinkClient Instance { get; private set; }
         private KelvinLinkHelper helperComponent;
         private UnityAction<Scene, LoadSceneMode> sceneLoadedAction;
         private GameObject serverMenuPanel;
@@ -22,6 +23,11 @@ namespace KelvinLinkMod
         private bool isAutoReconnectEnabled = true;
         private float reconnectInterval = 5f;
         private Coroutine gameStateUpdateCoroutine;
+
+        public KelvinLinkClient()
+        {
+            Instance = this;
+        }   
 
         private List<ServerInfo> availableServers = new List<ServerInfo>
         {
@@ -658,7 +664,7 @@ namespace KelvinLinkMod
 
         void Start()
         {
-            parentMod = GameObject.FindObjectOfType<KelvinLinkClient>();
+            parentMod = KelvinLinkClient.Instance;
         }
         
 
