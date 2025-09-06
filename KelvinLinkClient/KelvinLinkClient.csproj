@@ -52,6 +52,9 @@
       <HintPath>D:\Steam\steamapps\common\Sons Of The Forest\_Redloader\net6\SonsSdk.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="Unity.TextMeshPro">
+      <HintPath>D:\Steam\steamapps\common\Sons Of The Forest\_Redloader\Game\Unity.TextMeshPro.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine">
       <HintPath>D:\Steam\steamapps\common\Sons Of The Forest\_Redloader\unity-libs\UnityEngine.dll</HintPath>
     </Reference>
@@ -94,6 +97,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="manifest.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

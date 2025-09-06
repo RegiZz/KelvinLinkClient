@@ -1,0 +1,9 @@
+﻿{
+  "$schema": "https://raw.githubusercontent.com/ToniMacaroni/RedLoader/main/MetadataSchema.json",
+  "id": "KelvinLink",
+  "author": "RegiZz",
+  "version": "0.0.1",
+  "gameVersion": "1.0.0",
+  "description": "Allows to connect with KelvinLink servers",
+  "type": "Mod"
+}
